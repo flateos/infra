@@ -19,15 +19,15 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 WORKDIR=/tmp/archiso-tmp
-SRC=$(PWD)
-OUT=$(SRC)/out
+SRC=$(PWD)/core
+OUT=$(PWD)/out
 VERSION=$(shell date +%Y.%m.%d)
 
 
 .PHONY: install
 
 install:
-	sudo -k ./scripts/bootstrap.sh
+	sudo -k ./vendor/scripts/bootstrap.sh
 
 .PHONY: build
 

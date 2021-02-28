@@ -24,9 +24,9 @@ OUT=$(PWD)/out
 VERSION=$(shell date +%Y.%m.%d)
 
 
-.PHONY: install
+.PHONY: bootstrap
 
-install:
+bootstrap:
 	sudo -k ./vendor/scripts/bootstrap.sh
 
 .PHONY: build

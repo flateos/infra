@@ -1,4 +1,4 @@
-#!make
+#! /bin/bash
 
 # Copyright (c) 2021 Romullo @hiukky.
 
@@ -18,34 +18,35 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-WORKDIR=/tmp/archiso-tmp
-CORE=$(PWD)/core
-VENDOR=$(PWD)/vendor
-OUT=$(PWD)/out
-VERSION=$(shell date +%Y.%m.%d)
 
+function install_deps() {
+    pacman -Syyu archiso virt-manager qemu vde2 ebtables dnsmasq bridge-utils openbsd-netcat --noconfirm
+}
 
-.PHONY: bootstrap
+function set_qemu() {
+    systemctl enable libvirtd.service
+    systemctl start libvirtd.service
 
-bootstrap:
-	$(VENDOR)/scripts/bootstrap.sh
+    sed -i 's/#unix_sock_group/unix_sock_group/g' /etc/libvirt/libvirtd.conf
+    sed -i 's/#unix_sock_rw_perms/unix_sock_rw_perms/g' /etc/libvirt/libvirtd.conf
 
-.PHONY: env
+    usermod -a -G libvirt $(whoami)
 
-env:
-	sudo  $(VENDOR)/scripts/environment.sh
+    newgrp libvirt << EONG
+        systemctl restart libvirtd.service
+        modprobe -r kvm_intel
+        modprobe kvm_intel nested=1
+        echo "options kvm-intel nested=1" | tee /etc/modprobe.d/kvm-intel.conf
+EONG
+}
 
-.PHONY: build
+function main() {
+    install_deps
+    set_qemu
 
-build:
-	sudo mkarchiso -v -w $(WORKDIR) -o $(OUT) $(CORE)
+    sleep 3
 
-.PHONY: clean
+    echo "Done!!"
+}
 
-clean:
-	sudo rm -rf $(WORKDIR)
-
-.PHONY: run
-
-run:
-	run_archiso -i $(OUT)/unaveos-$(VERSION)-x86_64.iso
+main

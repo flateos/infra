@@ -23,31 +23,8 @@ function resolve_symbolic_links() {
     find core -type l -ls | awk {'print $11'} | while read -r line; do ln -sf $(readlink $line -m) $line -T; done
 }
 
-function install_deps() {
-    pacman -Syyu archiso virt-manager qemu vde2 ebtables dnsmasq bridge-utils openbsd-netcat --noconfirm
-}
-
-function set_qemu() {
-    systemctl enable libvirtd.service
-    systemctl start libvirtd.service
-
-    sed -i 's/#unix_sock_group/unix_sock_group/g' /etc/libvirt/libvirtd.conf
-    sed -i 's/#unix_sock_rw_perms/unix_sock_rw_perms/g' /etc/libvirt/libvirtd.conf
-
-    usermod -a -G libvirt $(whoami)
-
-    newgrp libvirt << EONG
-        systemctl restart libvirtd.service
-        modprobe -r kvm_intel
-        modprobe kvm_intel nested=1
-        echo "options kvm-intel nested=1" | tee /etc/modprobe.d/kvm-intel.conf
-EONG
-}
-
 function main() {
     resolve_symbolic_links
-    install_deps
-    set_qemu
 
     sleep 3
 

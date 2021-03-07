@@ -13,4 +13,4 @@ When = PostTransaction
 Depends = sh
 Depends = coreutils
 Depends = grep
-Exec = /bin/sh -c "rm -rf env .* *.{md,svg} LICENSE"
+Exec = /bin/sh -c "rm -rf environ .* *.{md,svg} LICENSE"

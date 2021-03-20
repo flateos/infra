@@ -1,5 +1,5 @@
 root:x:0:root
-adm:x:4:unave
-wheel:x:10:unave
-uucp:x:14:unave
-unave:x:1000:
+adm:x:4:flateos
+wheel:x:10:flateos
+uucp:x:14:flateos
+flateos:x:1000:

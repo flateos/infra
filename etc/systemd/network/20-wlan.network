@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 [Match]
-Type=wlan
+Name=wlp*
+Name=wlan*
 
 [Network]
 DHCP=yes
